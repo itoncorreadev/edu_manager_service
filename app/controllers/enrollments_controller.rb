@@ -23,6 +23,10 @@ class EnrollmentsController < ApplicationController
   private
 
   def set_course
-    @course = Course.find(params[:course_id])
+    @course = Course.find(enrollment_params[:course_id])
+  end
+
+  def enrollment_params
+    params.require(:enrollment).permit(:course_id)
   end
 end

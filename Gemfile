@@ -13,21 +13,9 @@ gem "redis", ">= 4.0.1"
 gem 'kaminari'
 gem 'active_model_serializers'
 
-# Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
-# gem "kredis"
-
-# Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-
-
-# Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
-
-# Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-# gem "image_processing", "~> 1.2"
-
 gem "rack-cors"
 
 group :development, :test do
@@ -36,12 +24,11 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'rubocop', require: false
+  gem 'rubocop-rails', require: false
 end
 
-group :development do
-  # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
-  # gem "spring"
-
+group :test do
+gem 'shoulda-matchers', '~> 6.0'
 end
 
 gem "tzinfo-data", platforms: %i[ windows jruby ]

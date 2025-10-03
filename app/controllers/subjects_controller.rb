@@ -1,10 +1,13 @@
 class SubjectsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_course
   before_action :set_subject, only: %i[show update destroy]
 
   def index
-    @subjects = @course.subjects
+    if params[:course_id]
+      @subjects = Subject.where(course_id: params[:course_id])
+    else
+      @subjects = Subject.all
+    end
     render json: @subjects
   end
 
@@ -13,7 +16,7 @@ class SubjectsController < ApplicationController
   end
 
   def create
-    @subject = @course.subjects.new(subject_params)
+    @subject = Subject.new(subject_params)
     if @subject.save
       render json: @subject, status: :created
     else
@@ -36,15 +39,11 @@ class SubjectsController < ApplicationController
 
   private
 
-  def set_course
-    @course = Course.find(params[:course_id])
-  end
-
   def set_subject
-    @subject = @course.subjects.find(params[:id])
+    @subject = Subject.find(params[:id])
   end
 
   def subject_params
-    params.require(:subject).permit(:name)
+    params.require(:subject).permit(:name, :course_id)
   end
 end

@@ -11,13 +11,24 @@ Rails.application.routes.draw do
 
   devise_for :users
 
-  resources :courses do
-    resources :subjects do
-      resources :lessons do
-        resources :assignments
-      end
-    end
-  end
+  # Cursos
+  resources :courses
+  # Diciplina: dentro de um curso
+  resources :subjects
+  # Lições: dentro de um Assunto
+  resources :lessons
+  # Tarefas: dentro de uma Lição
+  resources :assignments
+  # Entregas: de uma Tarefa
+  resources :submissions
+  # Materiais: de uma Lição
+  resources :materials
+
+  # Incrições: independentes
+  resources :enrollments, only: [:create, :index]
+
+  # Usuários
+  resources :users, only: [:index, :show, :create, :update, :destroy]
 
   resources :enrollments, only: [:create, :index]
 end

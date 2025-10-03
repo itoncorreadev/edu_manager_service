@@ -1,4 +1,3 @@
 class SubmissionSerializer < ActiveModel::Serializer
-  attributes :id, :content, :created_at
-  belongs_to :user, serializer: UserSerializer
+  attributes :id, :content, :assignment_id, :user_id, :created_at, :updated_at
 end
