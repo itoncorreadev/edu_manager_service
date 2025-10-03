@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :course do
-    title { "MyString" }
-    description { "MyText" }
-    teacher { nil }
+    title { "Curso #{Faker::Educator.subject}" }
+    description { Faker::Lorem.sentence }
+    association :teacher, factory: :user, strategy: :create
   end
 end

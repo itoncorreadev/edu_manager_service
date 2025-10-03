@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :material do
-    title { "MyString" }
-    content { "MyText" }
-    content_type { "MyString" }
-    lesson { nil }
+    title { "Material #{Faker::Educator.subject}" }
+    content { Faker::Lorem.paragraph }
+    content_type { ["video", "pdf", "link"].sample }
+    lesson
   end
 end

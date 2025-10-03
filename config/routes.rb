@@ -1,10 +1,23 @@
-Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+require 'sidekiq/web'
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+Rails.application.routes.draw do
+  secret_key = File.read(Rails.root.join('.sidekiq_session.key')).chomp
+  Sidekiq::Web.use ActionDispatch::Cookies
+  Sidekiq::Web.use ActionDispatch::Session::CookieStore, key: '_edu_manager_service_session', secret: secret_key
+
+  mount Sidekiq::Web => '/sidekiq'
+
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  devise_for :users
+
+  resources :courses do
+    resources :subjects do
+      resources :lessons do
+        resources :assignments
+      end
+    end
+  end
+
+  resources :enrollments, only: [:create, :index]
 end

@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :notification do
-    message { "MyString" }
-    user { nil }
+    message { Faker::Lorem.sentence }
     read { false }
+    user
   end
 end

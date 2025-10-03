@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :subject do
-    name { "MyString" }
-    course { nil }
+    name { Faker::Educator.subject }
+    course
   end
 end

@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :submission do
-    content { "MyText" }
-    assignment { nil }
-    user { nil }
+    content { Faker::Lorem.paragraph }
+    assignment
+    user
   end
 end
