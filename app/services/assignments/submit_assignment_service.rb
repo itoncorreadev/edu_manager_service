@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Assignments
   class SubmitAssignmentService
     def initialize(assignment:, student:, content:)

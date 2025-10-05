@@ -1,10 +1,11 @@
+# frozen_string_literal: true
+
 class AssignmentsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_lesson
   before_action :set_assignment, only: %i[show update destroy]
 
   def index
-    @assignments = @lesson.assignments
+    @assignments = params[:lesson_id] ? Assignment.where(lesson_id: params[:lesson_id]) : Assignment.all
     render json: @assignments
   end
 
@@ -13,7 +14,7 @@ class AssignmentsController < ApplicationController
   end
 
   def create
-    @assignment = @lesson.assignments.new(assignment_params.merge(user: current_user))
+    @assignment = Assignment.new(assignment_params.merge(user: current_user))
     if @assignment.save
       render json: @assignment, status: :created
     else
@@ -36,15 +37,11 @@ class AssignmentsController < ApplicationController
 
   private
 
-  def set_lesson
-    @lesson = Lesson.find(params[:lesson_id])
-  end
-
   def set_assignment
-    @assignment = @lesson.assignments.find(params[:id])
+    @assignment = Assignment.find(params[:id])
   end
 
   def assignment_params
-    params.require(:assignment).permit(:title, :description, :status)
+    params.require(:assignment).permit(:title, :description, :status, :lesson_id)
   end
 end

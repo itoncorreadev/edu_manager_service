@@ -1,10 +1,15 @@
+# frozen_string_literal: true
+
 class LessonsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_subject
   before_action :set_lesson, only: %i[show update destroy]
 
   def index
-    @lessons = @subject.lessons
+    @lessons = if params[:subject_id]
+                 Lesson.where(subject_id: params[:subject_id])
+               else
+                 Lesson.all
+               end
     render json: @lessons
   end
 
@@ -13,7 +18,7 @@ class LessonsController < ApplicationController
   end
 
   def create
-    @lesson = @subject.lessons.new(lesson_params)
+    @lesson = Lesson.new(lesson_params)
     if @lesson.save
       render json: @lesson, status: :created
     else
@@ -36,15 +41,11 @@ class LessonsController < ApplicationController
 
   private
 
-  def set_subject
-    @subject = Subject.find(params[:subject_id])
-  end
-
   def set_lesson
-    @lesson = @subject.lessons.find(params[:id])
+    @lesson = Lesson.find(params[:id])
   end
 
   def lesson_params
-    params.require(:lesson).permit(:title, :content)
+    params.require(:lesson).permit(:title, :content, :subject_id)
   end
 end

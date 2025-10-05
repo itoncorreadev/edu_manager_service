@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :subject do
-    name { Faker::Educator.subject }
-    course
+    name { "Disciplina #{Faker::Educator.subject}" }
+    association :course
   end
 end

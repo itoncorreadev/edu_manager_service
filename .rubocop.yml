@@ -1,0 +1,46 @@
+inherit_from: .rubocop_todo.yml
+
+plugins:
+  - rubocop-rails
+
+AllCops:
+  TargetRubyVersion: 3.2
+  NewCops: enable
+  Exclude:
+    - 'db/schema.rb'
+    - 'bin/*'
+    - 'node_modules/**/*'
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+    - 'spec/factories/**/*'
+
+Layout/LineLength:
+  Max: 120
+  IgnoredPatterns:
+    - '^\s*#' # ignora comentários com ou sem espaços
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Rails:
+  Enabled: true
+
+Style/Documentation:
+  Enabled: false
+  Exclude:
+    - 'app/controllers/**/*.rb'
+    - 'app/models/**/*.rb'
+    - 'app/serializers/**/*.rb'
+    - 'app/jobs/**/*.rb'
+    - 'app/policies/**/*.rb'
+    - 'app/queries/**/*.rb'
+    - 'spec/**/*.rb'
+    - 'config/**/*.rb'
+    - 'db/migrate/*.rb'
+
+Metrics/BlockLength:
+  ExcludedMethods: ['describe', 'context']
+
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - 'db/migrate/**/*'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Enrollments
   class EnrollStudentService
     def initialize(student:, course:)

@@ -1,5 +1,6 @@
+# frozen_string_literal: true
+
 class CoursesController < ApplicationController
-  before_action :authenticate_user!
   before_action :set_course, only: %i[show update destroy]
 
   def index
@@ -13,8 +14,8 @@ class CoursesController < ApplicationController
   end
 
   def create
-    authorize Course
     @course = Course.new(course_params.merge(teacher: current_user))
+    authorize @course
     if @course.save
       render json: @course, serializer: CourseSerializer, status: :created
     else

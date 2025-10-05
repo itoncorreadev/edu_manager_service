@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :lesson do
-    title { "Aula #{Faker::Educator.course_name}" }
+    title { "Aula #{Faker::Educator.subject}" }
     content { Faker::Lorem.paragraph }
-    subject
+    association :subject
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Assignments
   class CreateAssignmentService
     def initialize(lesson:, user:, params:)
