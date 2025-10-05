@@ -1,9 +1,13 @@
-class Courses::CourseEnrollmentsQuery
-  def initialize(course:)
-    @course = course
-  end
+# frozen_string_literal: true
 
-  def call
-    @course.enrollments.includes(:user)
+module Courses
+  class CourseEnrollmentsQuery
+    def initialize(course:)
+      @course = course
+    end
+
+    def call
+      @course.enrollments.includes(:user)
+    end
   end
 end

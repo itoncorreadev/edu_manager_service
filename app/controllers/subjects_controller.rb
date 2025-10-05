@@ -1,13 +1,15 @@
+# frozen_string_literal: true
+
 class SubjectsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_subject, only: %i[show update destroy]
 
   def index
-    if params[:course_id]
-      @subjects = Subject.where(course_id: params[:course_id])
-    else
-      @subjects = Subject.all
-    end
+    @subjects = if params[:course_id]
+                  Subject.where(course_id: params[:course_id])
+                else
+                  Subject.all
+                end
     render json: @subjects
   end
 

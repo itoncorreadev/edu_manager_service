@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
   before_create :generate_authentication_token!
-  
-  enum role: { student: 0, teacher: 1, admin: 2 }
 
-  has_many :courses, foreign_key: :teacher_id, dependent: :destroy
+  enum :role, { student: 0, teacher: 1, admin: 2 }
+
+  has_many :courses, foreign_key: :teacher_id, dependent: :destroy, inverse_of: :teacher
   has_many :enrollments, dependent: :destroy
   has_many :assignments, dependent: :destroy
   has_many :submissions, dependent: :destroy

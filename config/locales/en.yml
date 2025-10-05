@@ -28,4 +28,6 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
+  mailers:
+    user_mailer:
+      welcome_subject: "Welcome Email"

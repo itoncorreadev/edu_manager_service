@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::API
   include Pundit
-  
+
   before_action :authenticate_user_from_token!
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
-  
+
   private
 
   def authenticate_user_from_token!

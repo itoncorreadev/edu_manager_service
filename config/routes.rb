@@ -1,11 +1,13 @@
-require 'sidekiq/web'
+# frozen_string_literal: true
+
+require "sidekiq/web"
 
 Rails.application.routes.draw do
-  secret_key = File.read(Rails.root.join('.sidekiq_session.key')).chomp
+  secret_key = Rails.root.join(".sidekiq_session.key").read.chomp
   Sidekiq::Web.use ActionDispatch::Cookies
-  Sidekiq::Web.use ActionDispatch::Session::CookieStore, key: '_edu_manager_service_session', secret: secret_key
+  Sidekiq::Web.use ActionDispatch::Session::CookieStore, key: "_edu_manager_service_session", secret: secret_key
 
-  mount Sidekiq::Web => '/sidekiq'
+  mount Sidekiq::Web => "/sidekiq"
 
   get "up" => "rails/health#show", as: :rails_health_check
 
@@ -25,10 +27,10 @@ Rails.application.routes.draw do
   resources :materials
 
   # Incrições: independentes
-  resources :enrollments, only: [:create, :index]
+  resources :enrollments, only: %i[create index]
 
   # Usuários
-  resources :users, only: [:index, :show, :create, :update, :destroy]
+  resources :users, only: %i[index show create update destroy]
 
-  resources :enrollments, only: [:create, :index]
+  resources :enrollments, only: %i[create index]
 end

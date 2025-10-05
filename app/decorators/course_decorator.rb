@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CourseDecorator
   def initialize(course)
     @course = course

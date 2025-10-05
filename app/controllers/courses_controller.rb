@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CoursesController < ApplicationController
   before_action :set_course, only: %i[show update destroy]
 
@@ -20,7 +22,6 @@ class CoursesController < ApplicationController
       render json: { errors: @course.errors.full_messages }, status: :unprocessable_entity
     end
   end
-
 
   def update
     authorize @course

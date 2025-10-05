@@ -1,4 +1,6 @@
-require 'rails_helper'
+# frozen_string_literal: true
+
+require "rails_helper"
 
 RSpec.describe "Subjects", type: :request do
   let(:teacher) { create(:user, :teacher) }
@@ -9,14 +11,14 @@ RSpec.describe "Subjects", type: :request do
     it "returns all subjects" do
       get "/subjects", headers: auth_headers(teacher)
       expect(response).to have_http_status(:ok)
-      expect(JSON.parse(response.body).size).to eq(3)
+      expect(response.parsed_body.size).to eq(3)
     end
 
     it "filters subjects by course_id" do
       other_course = create(:course, teacher: teacher)
       get "/subjects", params: { course_id: other_course.id }, headers: auth_headers(teacher)
       expect(response).to have_http_status(:ok)
-      expect(JSON.parse(response.body)).to eq([])
+      expect(response.parsed_body).to eq([])
     end
   end
 
@@ -25,7 +27,7 @@ RSpec.describe "Subjects", type: :request do
       subject_ = subjects.first
       get "/subjects/#{subject_.id}", headers: auth_headers(teacher)
       expect(response).to have_http_status(:ok)
-      expect(JSON.parse(response.body)["id"]).to eq(subject_.id)
+      expect(response.parsed_body["id"]).to eq(subject_.id)
     end
   end
 
@@ -34,7 +36,7 @@ RSpec.describe "Subjects", type: :request do
       subject_params = { subject: { name: "New Subject", course_id: course.id } }
       post "/subjects", params: subject_params, headers: auth_headers(teacher)
       expect(response).to have_http_status(:created)
-      expect(JSON.parse(response.body)["name"]).to eq("New Subject")
+      expect(response.parsed_body["name"]).to eq("New Subject")
     end
   end
 
@@ -50,9 +52,9 @@ RSpec.describe "Subjects", type: :request do
   describe "DELETE /subjects/:id" do
     it "deletes a subject" do
       subject_ = subjects.first
-      expect {
+      expect do
         delete "/subjects/#{subject_.id}", headers: auth_headers(teacher)
-      }.to change(Subject, :count).by(-1)
+      end.to change(Subject, :count).by(-1)
       expect(response).to have_http_status(:no_content)
     end
   end

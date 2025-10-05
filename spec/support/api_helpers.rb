@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 module ApiHelpers
   def auth_headers(user)

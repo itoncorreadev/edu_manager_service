@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative "boot"
 
 require "rails"
@@ -20,7 +22,7 @@ module EduManagerService
   class Application < Rails::Application
     config.active_job.queue_adapter = :sidekiq
     config.load_defaults 7.1
-    config.autoload_lib(ignore: %w(assets tasks))
+    config.autoload_lib(ignore: %w[assets tasks])
     config.api_only = true
     # Configuration for the application, engines, and railties goes here.
     #

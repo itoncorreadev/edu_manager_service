@@ -1,16 +1,18 @@
-require 'rails_helper'
+# frozen_string_literal: true
+
+require "rails_helper"
 
 RSpec.describe User, type: :model do
   subject { build(:user) }
 
-  it { should have_many(:courses).with_foreign_key('teacher_id').dependent(:destroy) }
+  it { should have_many(:courses).with_foreign_key("teacher_id").dependent(:destroy) }
   it { should have_many(:enrollments).dependent(:destroy) }
   it { should have_many(:assignments).dependent(:destroy) }
   it { should have_many(:submissions).dependent(:destroy) }
   it { should have_many(:notifications).dependent(:destroy) }
 
   it { should validate_presence_of(:email) }
-  
+
   it "validates uniqueness of email" do
     existing_user = create(:user)
     user_with_duplicate_email = build(:user, email: existing_user.email)

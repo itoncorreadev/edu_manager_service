@@ -1,4 +1,6 @@
-require 'rails_helper'
+# frozen_string_literal: true
+
+require "rails_helper"
 
 RSpec.describe "Assignments", type: :request do
   let(:teacher) { create(:user, :teacher) }
@@ -12,7 +14,7 @@ RSpec.describe "Assignments", type: :request do
     it "returns all assignments for a lesson" do
       get "/assignments", params: { lesson_id: lesson.id }, headers: auth_headers(teacher)
       expect(response).to have_http_status(:ok)
-      expect(JSON.parse(response.body).size).to eq(2)
+      expect(response.parsed_body.size).to eq(2)
     end
   end
 
@@ -21,7 +23,7 @@ RSpec.describe "Assignments", type: :request do
       assignment = assignments.first
       get "/assignments/#{assignment.id}", headers: auth_headers(teacher)
       expect(response).to have_http_status(:ok)
-      expect(JSON.parse(response.body)["id"]).to eq(assignment.id)
+      expect(response.parsed_body["id"]).to eq(assignment.id)
     end
   end
 
@@ -30,14 +32,15 @@ RSpec.describe "Assignments", type: :request do
       assignment_params = { assignment: { title: "New Assignment", description: "Task", lesson_id: lesson.id } }
       post "/assignments", params: assignment_params, headers: auth_headers(teacher)
       expect(response).to have_http_status(:created)
-      expect(JSON.parse(response.body)["title"]).to eq("New Assignment")
+      expect(response.parsed_body["title"]).to eq("New Assignment")
     end
   end
 
   describe "PUT /assignments/:id" do
     it "updates an assignment" do
       assignment = assignments.first
-      put "/assignments/#{assignment.id}", params: { assignment: { title: "Updated Assignment" } }, headers: auth_headers(teacher)
+      put "/assignments/#{assignment.id}", params: { assignment: { title: "Updated Assignment" } },
+                                           headers: auth_headers(teacher)
       expect(response).to have_http_status(:ok)
       expect(assignment.reload.title).to eq("Updated Assignment")
     end
@@ -46,9 +49,9 @@ RSpec.describe "Assignments", type: :request do
   describe "DELETE /assignments/:id" do
     it "deletes an assignment" do
       assignment = assignments.first
-      expect {
+      expect do
         delete "/assignments/#{assignment.id}", headers: auth_headers(teacher)
-      }.to change(Assignment, :count).by(-1)
+      end.to change(Assignment, :count).by(-1)
       expect(response).to have_http_status(:no_content)
     end
   end

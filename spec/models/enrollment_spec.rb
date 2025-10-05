@@ -1,8 +1,10 @@
-require 'rails_helper'
+# frozen_string_literal: true
+
+require "rails_helper"
 
 RSpec.describe Enrollment, type: :model do
-  subject { create(:enrollment) } 
-  
+  subject { create(:enrollment) }
+
   it { should belong_to(:user) }
   it { should belong_to(:course) }
 

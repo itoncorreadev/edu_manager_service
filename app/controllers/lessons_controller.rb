@@ -1,13 +1,15 @@
+# frozen_string_literal: true
+
 class LessonsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_lesson, only: %i[show update destroy]
 
   def index
-    if params[:subject_id]
-      @lessons = Lesson.where(subject_id: params[:subject_id])
-    else
-      @lessons = Lesson.all
-    end
+    @lessons = if params[:subject_id]
+                 Lesson.where(subject_id: params[:subject_id])
+               else
+                 Lesson.all
+               end
     render json: @lessons
   end
 

@@ -1,13 +1,15 @@
+# frozen_string_literal: true
+
 class EnrollmentsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_course, only: %i[create]
 
   def index
-    if current_user.teacher?
-      @enrollments = Enrollment.joins(:course).where(courses: { teacher_id: current_user.id })
-    else
-      @enrollments = current_user.enrollments
-    end
+    @enrollments = if current_user.teacher?
+                     Enrollment.joins(:course).where(courses: { teacher_id: current_user.id })
+                   else
+                     current_user.enrollments
+                   end
     render json: @enrollments
   end
 
