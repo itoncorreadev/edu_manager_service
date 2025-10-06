@@ -14,11 +14,11 @@ class EnrollmentsController < ApplicationController
   end
 
   def create
-    enrollment = Enrollment.new(user: current_user, course: @course)
+    @enrollment = Enrollment.new(user: current_user, course: @course)
     if enrollment.save
-      render json: enrollment, status: :created
+      render json: @enrollment, status: :created
     else
-      render json: { errors: enrollment.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @enrollment.errors.full_messages }, status: :unprocessable_entity
     end
   end
 

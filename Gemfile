@@ -14,9 +14,6 @@ gem "puma", ">= 5.0"
 gem "pundit"
 gem "redis", ">= 4.0.1"
 gem "sidekiq"
-
-# gem "bcrypt", "~> 3.1.7"
-
 gem "bootsnap", require: false
 gem "rack-cors"
 
