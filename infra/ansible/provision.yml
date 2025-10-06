@@ -1,0 +1,62 @@
+---
+- name: Provision EC2 for Rails app
+  hosts: rails
+  become: true
+  tasks:
+    - name: Update and install dependencies
+      apt:
+        update_cache: yes
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable
+        state: present
+
+    - name: Install Docker and Compose
+      apt:
+        update_cache: yes
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+        state: present
+
+    - name: Add deploy user
+      user:
+        name: deploy
+        shell: /bin/bash
+        groups: docker
+        append: yes
+        create_home: yes
+
+    - name: Authorize SSH key for deploy
+      authorized_key:
+        user: deploy
+        key: "{{ lookup('file', 'id_rsa.pub') }}"
+
+    - name: Create app directory
+      file:
+        path: /home/deploy/app
+        state: directory
+        owner: deploy
+        group: deploy
+        mode: '0755'
+
+    - name: Enable Docker at boot
+      systemd:
+        name: docker
+        enabled: true
+        state: started
