@@ -42,3 +42,25 @@
 # .tfstate files
 *.tfstate
 *.tfstate.*
+
+# Diretórios de dependências
+node_modules
+vendor/bundle
+.log
+tmp
+*.log
+*.pid
+
+# Terraform, Docker e arquivos locais grandes
+infra/terraform/.terraform
+.docker
+docker-compose.override.yml
+
+# Git
+.git
+.gitignore
+
+# Arquivos de editor
+*.swp
+*.sublime-project
+*.sublime-workspace

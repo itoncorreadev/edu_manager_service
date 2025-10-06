@@ -1,4 +1,4 @@
-name: Deploy to EC2 via Docker Compose
+name: Deploy to EC2 using ECR
 
 on:
   push:
@@ -7,30 +7,74 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up SSH key
-        uses: webfactory/ssh-agent@v0.8.1
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > id_rsa.pem
+          chmod 600 id_rsa.pem
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Add EC2 host to known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Sync code to EC2
+      - name: Ensure ECR repository exists
+        env:
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
         run: |
-          rsync -az --delete --exclude='.git' -e "ssh -o StrictHostKeyChecking=yes" \
-            ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:${{ secrets.TARGET_DIR }}/
+          aws ecr describe-repositories --repository-names $ECR_REPOSITORY || \
+          aws ecr create-repository --repository-name $ECR_REPOSITORY
 
-      - name: Restart Docker Compose app
+      - name: Prune Docker system
         run: |
-          ssh -o StrictHostKeyChecking=yes ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} <<'EOF'
-            cd ${{ secrets.TARGET_DIR }}
-            docker compose pull || true
-            docker compose up -d --build
-            docker image prune -f
+          docker system prune -af
+          docker volume prune -f
+
+      - name: Build, tag, and push image to ECR
+        env:
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+      - name: Prepare SSH key
+        run: |
+          echo "${{ secrets.SSH_KEY }}" > id_rsa.pem
+          chmod 600 id_rsa.pem
+
+      - name: Deploy on EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          ssh -o ConnectTimeout=60 -o ServerAliveInterval=30 -o ServerAliveCountMax=5 \
+          -i id_rsa.pem -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST <<EOF
+            set -e
+            echo "🚀 Starting deploy on EC2..."
+
+            echo "🔐 Logging in to ECR..."
+            aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+
+            echo "📦 Pulling latest image from ECR..."
+            mkdir -p ~/app
+            cd ~/app
+
+            echo "🧰 Updating and restarting container..."
+            docker compose pull
+            nohup docker compose up -d > deploy.log 2>&1 &
+            echo "✅ Deploy completed successfully!"
           EOF

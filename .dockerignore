@@ -29,3 +29,12 @@
 !/storage/.keep
 /tmp/storage/*
 !/tmp/storage/.keep
+
+# Local .terraform directories
+**/.terraform/*
+infra/*
+.github/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
