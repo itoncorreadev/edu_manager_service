@@ -11,7 +11,7 @@ Rails.application.routes.draw do
 
   get "up" => "rails/health#show", as: :rails_health_check
 
-  devise_for :users
+  devise_for :users, skip: [:registrations]
 
   # Cursos
   resources :courses
@@ -30,7 +30,7 @@ Rails.application.routes.draw do
   resources :enrollments, only: %i[create index]
 
   # Usuários
-  resources :users, only: %i[index show create update destroy]
+  resources :users, only: %i[index show create]
 
   resources :enrollments, only: %i[create index]
 end
